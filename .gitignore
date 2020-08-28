@@ -1,5 +1,15 @@
 # Folder used by faas-cli
-template/
+# DON'T ignore this parent folder
+!template/
+# DO ignore everything in it
+template/*
+# DON'T ignore this template folder (or it's content)
+!template/orions-node12/
 
 # Build folder
+**/build/
 build/
+
+# Dependencies
+**/node_modules/
+node_modules/
