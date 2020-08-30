@@ -1,0 +1,25 @@
+version: 1.0
+
+provider:
+  name: openfaas
+  gateway: https://${DO_SUBDOMAIN:-antenna}.orionsbelt.ca
+
+configuration:
+  copy:
+    - ./common
+
+functions:
+  status-util:
+    lang: orions-node12
+    handler: ./status-util
+    image: ${REGISTRY_USER:-orionsbelts}/status-util:latest
+    readonly_root_filesystem: true
+  slack:
+    lang: orions-node12
+    handler: ./slack
+    image: ${REGISTRY_USER:-orionsbelts}/slack:latest
+    readonly_root_filesystem: true
+    secrets:
+      - SLACK_CLIENT_ID
+      - SLACK_CLIENT_SECRET
+      - SLACK_STATE_SECRET
