@@ -55,13 +55,3 @@ if [ "${ERROR_SECRETS}" != "" ]; then
 
   exit 1
 fi
-
-# Log into open-faas instance
-# TODO(mperrote): do this ^
-
-# Create secrets in open-faas instance
-for FN_SECRET in ${FN_SECRET_LIST}; do
-  SECRET_VALUE=$(echo "${SECRETS}" | jq -r --arg KEY "${FN_SECRET}" '.[$KEY]')
-  echo "Adding secret: ${FN_SECRET}.."
-  # fast-cli secret create "${FN_SECRET}" --from-literal="${SECRET_VALUE}"
-done
