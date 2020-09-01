@@ -20,7 +20,7 @@ fi
 FN_SECRET_LIST=$(cat "${STACK_FILE}" | yq '.functions[].secrets[]?' | jq --slurp -r '.[]')
 
 # Fetch secret names from GitHub
-GITHUB_SECRETS=$(echo "${SECRETS}" | jq 'keys')
+GITHUB_SECRETS=$(echo "${SECRETS}" | jq -r 'keys[]')
 
 ERROR_SECRETS=""
 
