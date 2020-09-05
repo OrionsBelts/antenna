@@ -1,5 +1,5 @@
 ---
-name: validations
+name: CI/CD - pull_reqeust
 
 on:
   pull_request:
@@ -30,4 +30,5 @@ jobs:
         run: |
           # Running secret validation script
           cd ${GITHUB_WORKSPACE}/core
+          printenv
           bash ./scripts/validate-secrets.sh
