@@ -1,4 +1,4 @@
-#cloud-config
+# cloud-config
 ssh_authorized_keys:
   - ${ssh_key}
 
@@ -16,6 +16,8 @@ users:
 write_files:
 - content: |
     {
+      acme_ca ${letsencrypt_acme}
+      acme_ca_root ${letsencrypt_acme_root}
       email ${letsencrypt_email}
     }
 
