@@ -30,5 +30,44 @@ jobs:
         run: |
           # Running secret validation script
           cd ${GITHUB_WORKSPACE}/core
-          printenv
           bash ./scripts/validate-secrets.sh
+
+  variables:
+      name: Validate Variables
+      runs-on: ubuntu-20.04
+      steps:
+        - name: Checkout repo
+          uses: actions/checkout@v2
+
+        - name: Fetch Public SSH key / Cert PEM File
+          env:
+            DO_API_TOKEN: ${{ secrets.DO_API_TOKEN }}
+            SSH_KEY_NAME: ${{ secrets.PROD_DO_SSH_KEY_NAME }}
+          run: |
+            # Fetching Data
+            cd ${GITHUB_WORKSPACE}/core
+            # Fetching Public SSH key
+            bash ./scripts/fetch-sshkey.sh
+            # Fetching Staging Cert PEM File
+            bash ./scripts/fetch-pem.sh
+
+        - name: Run variable validation
+          env:
+            TF_VAR_do_create_record: true
+            TF_VAR_do_domain: ${{ secrets.PROD_DOMAIN }}
+            TF_VAR_do_ipv4_float: ${{ secrets.PROD_IPV4 }}
+            TF_VAR_do_region: ${{ secrets.PROD_REGION }}
+            TF_VAR_do_registry_auth: ${{ secrets.DO_CONTAINER_REGISTRY_AUTH_TOKEN }}
+            TF_VAR_do_ssh_key: ${{ secrets.PROD_DO_SSH_KEY_NAME }}
+            TF_VAR_do_subdomain: ${{ secrets.PROD_SUBDOMAIN }}
+            TF_VAR_do_token: ${{ secrets.DO_API_TOKEN }}
+            TF_VAR_letsencrypt_email: ${{ secrets.PROD_LETSENCRYPT_EMAIL }}
+            TF_VAR_letsencrypt_amce: ${{ secrets.PROD_LETSENCRYPT_EMAIL }}
+            TF_VAR_ssh_key_file: "${{ secrets.PROD_DO_SSH_KEY_NAME }}.pub"
+            TF_VAR_cloud_template: cloud-config-staging.tpl
+            TF_INPUT: false
+          run: |
+            # Running variable validation script
+            cd ${GITHUB_WORKSPACE}/core
+            terraform init
+            terraform plan
