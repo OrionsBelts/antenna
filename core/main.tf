@@ -130,7 +130,7 @@ resource "digitalocean_record" "faasd" {
   name   = var.do_subdomain
   value  = var.do_ipv4_float
   # Only creates record if do_create_record is true
-  count = var.do_create_record == true ? 1 : 0
+  # count = var.do_create_record == true ? 1 : 0
 }
 
 resource "random_password" "password" {
