@@ -118,7 +118,7 @@ jobs:
         run: terraform apply -auto-approve
 
       - name: Wait for System
-        timeout-minutes: 5
+        timeout-minutes: 10
         working-directory: ./core
         run: scripts/online-check.sh
 
