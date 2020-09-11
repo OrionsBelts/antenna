@@ -36,10 +36,6 @@ variable "do_token" {
 variable "letsencrypt_email" {
   description = "Email used to order a certificate from Letsencrypt"
 }
-variable "letsencrypt_acme" {
-  default     = ""
-  description = "(optionsal) ACME CA url for letsencrypt"
-}
 variable "ssh_key_file" {
   description = "Path to the SSH public key file"
 }
@@ -68,7 +64,6 @@ data "template_file" "cloud_init" {
     do_registry_auth  = var.do_registry_auth,
     faasd_domain_name = "${var.do_subdomain}.${var.do_domain}"
     letsencrypt_email = var.letsencrypt_email
-    letsencrypt_acme  = var.letsencrypt_acme
   }
 }
 

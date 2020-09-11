@@ -16,7 +16,7 @@ users:
 write_files:
 - content: |
     {
-      acme_ca ${letsencrypt_acme}
+      acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
       email ${letsencrypt_email}
     }
 
