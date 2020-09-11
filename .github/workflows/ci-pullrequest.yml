@@ -18,7 +18,7 @@ env:
   TF_VAR_do_subdomain: ${{ secrets.PROD_SUBDOMAIN }}
   TF_VAR_do_token: ${{ secrets.DO_API_TOKEN }}
   TF_VAR_letsencrypt_email: ${{ secrets.PROD_LETSENCRYPT_EMAIL }}
-  TF_VAR_letsencrypt_amce: ${{ secrets.PROD_LETSENCRYPT_EMAIL }}
+  TF_VAR_letsencrypt_amce: ${{ secrets.STAGING_LETSENCRYPT_AMCE }}
   TF_VAR_ssh_key_file: "${{ secrets.PROD_DO_SSH_KEY_NAME }}.pub"
   TF_VAR_cloud_template: cloud-config-staging.tpl
   TF_IN_AUTOMATION: true
@@ -108,6 +108,7 @@ jobs:
         run: terraform apply -auto-approve
 
       - name: Wait for System
+        timeout-minutes: 5
         working-directory: ./core
         run: scripts/online-check.sh
 
