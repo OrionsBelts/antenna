@@ -11,11 +11,8 @@
 set -e
 
 # Validate Environment Variables
-[[ -z "${GITHUB_WORKSPACE}" ]] && echo "Missing Env Var" && exit 1
 [[ -z "${DO_API_TOKEN}" ]] && echo "Missing Env Var" && exit 1
 [[ -z "${SSH_KEY_NAME}" ]] && echo "Missing Env Var" && exit 1
-
-cd ${GITHUB_WORKSPACE}/core
 
 FILENAME="${SSH_KEY_NAME}.pub"
 
