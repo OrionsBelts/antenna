@@ -120,6 +120,8 @@ jobs:
       - name: Wait for System
         timeout-minutes: 10
         working-directory: ./core
+        env:
+          TF_VAR_do_subdomain: ${{ format('{0}.{1}', env.COMMITISH, secrets.STAGING_SUBDOMAIN) }}
         run: scripts/online-check.sh
 
       - name: Test environment
