@@ -20,7 +20,7 @@ set -e
 
 PASSWORD=$(cat terraform.tfstate | jq -r '.resources[] | select(.name == "password") | .instances[].attributes.result')
 
-printf "Waiting for online"
+echo "Waiting for online"
 
 until $(
   curl \
@@ -33,6 +33,6 @@ until $(
     --user "admin:${PASSWORD}" \
     "https://${TF_VAR_do_subdomain}.${TF_VAR_do_domain}/ui/"
 ); do
-  printf "."
+  echo "."
   sleep 5s
 done
