@@ -19,8 +19,10 @@ set -e
 [[ ! -f terraform.tfstate ]] && echo "Missing File" && exit 1
 
 PASSWORD=$(cat terraform.tfstate | jq -r '.resources[] | select(.name == "password") | .instances[].attributes.result')
+DOMAIN="${TF_VAR_do_subdomain}.${TF_VAR_do_domain}"
+INSTANCE_URI="https://${DOMAIN}/ui/"
 
-echo "Waiting for online"
+echo "Waiting for ${INSTANCE_URI}"
 
 until $(
   curl \
@@ -31,7 +33,7 @@ until $(
     --max-time 3 \
     --cacert fakelerootx1.pem \
     --user "admin:${PASSWORD}" \
-    "https://${TF_VAR_do_subdomain}.${TF_VAR_do_domain}/ui/"
+    "${INSTANCE_URI}"
 ); do
   echo "."
   sleep 5s
