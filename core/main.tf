@@ -40,10 +40,6 @@ variable "letsencrypt_acme" {
   default     = ""
   description = "(optionsal) ACME CA url for letsencrypt"
 }
-variable "letsencrypt_acme_root" {
-  default     = ""
-  description = "(optionsal) ACME CA root PEM file for letsencrypt"
-}
 variable "ssh_key_file" {
   description = "Path to the SSH public key file"
 }
@@ -67,13 +63,12 @@ data "local_file" "ssh_key" {
 data "template_file" "cloud_init" {
   template = "${file("${var.cloud_template}")}"
   vars = {
-    gw_password           = random_password.password.result,
-    ssh_key               = data.local_file.ssh_key.content,
-    do_registry_auth      = var.do_registry_auth,
-    faasd_domain_name     = "${var.do_subdomain}.${var.do_domain}"
-    letsencrypt_email     = var.letsencrypt_email
-    letsencrypt_acme      = var.letsencrypt_acme
-    letsencrypt_acme_root = var.letsencrypt_acme_root
+    gw_password       = random_password.password.result,
+    ssh_key           = data.local_file.ssh_key.content,
+    do_registry_auth  = var.do_registry_auth,
+    faasd_domain_name = "${var.do_subdomain}.${var.do_domain}"
+    letsencrypt_email = var.letsencrypt_email
+    letsencrypt_acme  = var.letsencrypt_acme
   }
 }
 
