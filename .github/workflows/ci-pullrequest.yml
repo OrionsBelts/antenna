@@ -15,8 +15,7 @@ env:
   TF_VAR_do_region: ${{ secrets.STAGING_REGION }}
   TF_VAR_do_registry_auth: ${{ secrets.DO_CONTAINER_REGISTRY_AUTH_TOKEN }}
   TF_VAR_do_ssh_key: ${{ secrets.STAGING_DO_SSH_KEY_NAME }}
-  TF_VAR_do_subdomain: ${{ format('{0}.{1}', github.sha, secrets.STAGING_SUBDOMAIN) }}
-  # TF_VAR_do_subdomain: ${{ secrets.STAGING_SUBDOMAIN }}
+  TF_VAR_do_subdomain: ${{ format('{0}.{1}', github.head_ref, secrets.STAGING_SUBDOMAIN) }}
   TF_VAR_do_token: ${{ secrets.DO_API_TOKEN }}
   TF_VAR_letsencrypt_email: ${{ secrets.STAGING_LETSENCRYPT_EMAIL }}
   TF_VAR_ssh_key_file: "${{ secrets.STAGING_DO_SSH_KEY_NAME }}.pub"
@@ -27,7 +26,7 @@ env:
 jobs:
   secrets:
     name: Validate Secrets
-    runs-on: macOS-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -35,10 +34,11 @@ jobs:
       - name: Install dependencies
         run: |
           # Installing dependecies
-          brew install python-yq faas-cli
+          pip3 install yq
+          echo "::add-path::/home/runner/.local/bin"
           # Check versions; validate deps
           jq --version
-          yq --version
+          /home/runner/.local/bin/yq --version
 
       - name: Run secret validation
         env:
@@ -72,9 +72,14 @@ jobs:
         working-directory: ./core
         run: terraform validate
 
+      - name: Generate SHA slug
+        run: echo "::set-env name=COMMITISH::$(git rev-parse --short HEAD)"
+
       # NOTE: This command will validate variables are present/correct
       - name: Plan terraform
         working-directory: ./core
+        env:
+          TF_VAR_do_subdomain: ${{ format('{0}.{1}', env.COMMITISH, secrets.STAGING_SUBDOMAIN) }}
         run: terraform plan
 
   smoketest:
@@ -102,9 +107,14 @@ jobs:
         working-directory: ./core
         run: terraform init
 
+      - name: Generate SHA slug
+        run: echo "::set-env name=COMMITISH::$(git rev-parse --short HEAD)"
+
       - name: Apply terraform
         timeout-minutes: 10
         working-directory: ./core
+        env:
+          TF_VAR_do_subdomain: ${{ format('{0}.{1}', env.COMMITISH, secrets.STAGING_SUBDOMAIN) }}
         run: terraform apply -auto-approve
 
       - name: Wait for System
@@ -125,4 +135,6 @@ jobs:
       - name: Teardown environment
         if: ${{ always() }}
         working-directory: ./core
+        env:
+          TF_VAR_do_subdomain: ${{ format('{0}.{1}', env.COMMITISH, secrets.STAGING_SUBDOMAIN) }}
         run: terraform destroy -auto-approve
