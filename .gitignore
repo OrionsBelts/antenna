@@ -5,6 +5,7 @@
 template/*
 # DON'T ignore this template folder (or it's content)
 !template/orions-node12/
+!template/orions-smoketest/
 
 # Build folder
 **/build/
