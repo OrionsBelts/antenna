@@ -47,7 +47,7 @@ variable "cloud_template" {
 data "digitalocean_droplet" "vpn" {
   name = "barnards-loop"
 }
-data "digitalocean_floating_ip" "nyc2-ipv4-address" {
+data "digitalocean_floating_ip" "staging-ipv4-address" {
   ip_address = var.do_ipv4_float
 }
 data "digitalocean_ssh_key" "main" {
@@ -81,6 +81,7 @@ resource "digitalocean_droplet" "faasd" {
 resource "digitalocean_firewall" "faasd" {
   droplet_ids = [digitalocean_droplet.faasd.id]
   name        = "open-web-default-ssh"
+  depends_on  = [digitalocean_droplet.faasd]
 
   # SSH rules
   inbound_rule {
@@ -122,6 +123,7 @@ resource "digitalocean_firewall" "faasd" {
 resource "digitalocean_floating_ip_assignment" "faasd-ipv4" {
   ip_address = var.do_ipv4_float
   droplet_id = digitalocean_droplet.faasd.id
+  depends_on = [digitalocean_droplet.faasd]
 }
 
 resource "digitalocean_record" "faasd" {
