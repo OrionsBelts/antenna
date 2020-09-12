@@ -52,7 +52,7 @@ openfaas_updateFuncYaml() {
   # Generate temp yaml
   cat "${FILENAME}" | \
   yq \
-    '.functions.secrets = ["SOME_SECRET"] | .configuration.copy = ["./common"]' \
+    '.functions.smoketest.secrets = ["SOME_SECRET"] | .configuration.copy = ["./common"] | .version = "1.0"' \
     --yaml-output \
   > "${FILENAME}.tmp"
 
