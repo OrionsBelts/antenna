@@ -15,7 +15,6 @@ env:
   TF_VAR_do_region: ${{ secrets.STAGING_REGION }}
   TF_VAR_do_registry_auth: ${{ secrets.DO_CONTAINER_REGISTRY_AUTH_TOKEN }}
   TF_VAR_do_ssh_key: ${{ secrets.STAGING_DO_SSH_KEY_NAME }}
-  TF_VAR_do_subdomain: ${{ format('{0}.{1}', github.head_ref, secrets.STAGING_SUBDOMAIN) }}
   TF_VAR_do_token: ${{ secrets.DO_API_TOKEN }}
   TF_VAR_letsencrypt_email: ${{ secrets.STAGING_LETSENCRYPT_EMAIL }}
   TF_VAR_ssh_key_file: "${{ secrets.STAGING_DO_SSH_KEY_NAME }}.pub"
@@ -92,6 +91,15 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
+      - name: Install dependencies
+        run: |
+          # Installing dependecies
+          pip3 install yq
+          echo "::add-path::/home/runner/.local/bin"
+          # Check versions; validate deps
+          jq --version
+          /home/runner/.local/bin/yq --version
+
       - name: Fetch Public SSH key
         env:
           DO_API_TOKEN: ${{ secrets.DO_API_TOKEN }}
@@ -126,13 +134,11 @@ jobs:
 
       - name: Test environment
         if: ${{ success() }}
-        run: |
-          # Running test commands
-          # TODO:
-          # - instanciate one secret
-          # - instanciate smoketest function
-          # - invoke smoketest function
-          echo "test"
+        working-directory: ./core
+        env:
+          TF_VAR_do_subdomain: ${{ format('{0}.{1}', env.COMMITISH, secrets.STAGING_SUBDOMAIN) }}
+          FUNCTION_PREFIX: ${{ secrets.DO_CONTAINER_REGISTRY_PREFIX }}
+        run: scripts/smoketest.sh
 
       - name: Teardown environment
         if: ${{ always() }}
