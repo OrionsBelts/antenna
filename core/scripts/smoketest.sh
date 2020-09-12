@@ -14,6 +14,7 @@ set -e
 [[ -z "${TF_VAR_do_subdomain}" ]] && echo "Missing Env Var" && exit 1
 [[ -z "${TF_VAR_do_domain}" ]] && echo "Missing Env Var" && exit 1
 [[ -z "${FUNCTION_PREFIX}" ]] && echo "Missing Env Var" && exit 1
+[[ -z "${DO_REGISTRY_AUTH}" ]] && echo "Missing Env Var" && exit 1
 
 # Check to see that deps are installed
 jq --version
@@ -108,6 +109,12 @@ openfaas_invokeFunc() {
 
 # Install `faas-cli`
 curl -sSL https://cli.openfaas.com | sudo sh
+
+# Grant permission to container registry
+echo "INFO: make docker directory"
+mkdir -p "${HOME}/.docker/"
+echo "INFO: creating docker config"
+echo "{\"auths\":{\"registry.digitalocean.com\":{\"auth\":\"${DO_REGISTRY_AUTH}\"}}}" > "${HOME}/.docker/config.json"
 
 # Repo root
 cd ".."

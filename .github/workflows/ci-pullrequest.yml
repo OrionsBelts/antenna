@@ -138,6 +138,7 @@ jobs:
         env:
           TF_VAR_do_subdomain: ${{ format('{0}.{1}', env.COMMITISH, secrets.STAGING_SUBDOMAIN) }}
           FUNCTION_PREFIX: ${{ secrets.DO_CONTAINER_REGISTRY_PREFIX }}
+          DO_REGISTRY_AUTH: ${{ secrets.DO_CONTAINER_REGISTRY_AUTH_TOKEN }}
         run: scripts/smoketest.sh
 
       - name: Teardown environment
