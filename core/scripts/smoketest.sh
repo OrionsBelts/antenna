@@ -26,7 +26,7 @@ GATEWAY_URI="https://${DOMAIN}/"
 TEMPLATE="orions-smoketest"
 FUNC_NAME="smoketest"
 FILENAME="${FUNC_NAME}.yml"
-SECRET_KEY="SOME_SECRET"
+SECRET_KEY="some-secret"
 SECRET_VALUE="super-secret-value"
 
 # Function Declarations
@@ -53,7 +53,8 @@ openfaas_updateFuncYaml() {
   # Generate temp yaml
   cat "${FILENAME}" | \
   yq \
-    '.functions.smoketest.secrets = ["SOME_SECRET"] | .configuration.copy = ["./common"] | .version = "1.0"' \
+    --arg KEY "${SECRET_KEY}" \
+    '.functions.smoketest.secrets = [$KEY] | .configuration.copy = ["./common"] | .version = "1.0"' \
     --yaml-output \
   > "${FILENAME}.tmp"
 
