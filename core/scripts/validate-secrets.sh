@@ -1,7 +1,16 @@
 #!/usr/bin/env bash
 
+##
+# Description
+#
+#
+##
+
 # Exit immediately if there is an error
 set -e
+
+# Validate Environment Variables
+[[ -z "${SECRETS}" ]] && echo "Missing Env Var" && exit 1
 
 # Check to see that deps are installed
 jq --version
@@ -29,7 +38,9 @@ for FN_SECRET in ${FN_SECRET_LIST}; do
   KEY_EXISTS="false"
 
   for SECRET_KEY in ${GITHUB_SECRETS}; do
-    if [ ${FN_SECRET} == ${SECRET_KEY} ]; then
+    SECRET_KEY_FORMATTED=$(echo "${SECRET_KEY}" | tr '[:upper:]' '[:lower:]' | sed s/_/-/g)
+
+    if [ ${FN_SECRET} == ${SECRET_KEY_FORMATTED} ]; then
       # INFO(mperrotte): secret exists
       KEY_EXISTS="true"
       break
