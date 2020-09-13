@@ -30,6 +30,15 @@ SECRET_KEY="some-secret"
 SECRET_VALUE="super-secret-value"
 
 # Function Declarations
+docker_auth() {
+  mkdir -p "${HOME}/.docker/"
+  local AUTH=$(curl -s \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer ${TF_VAR_do_token}" \
+    "https://api.digitalocean.com/v2/registry/docker-credentials?read_write=true")
+  echo "${AUTH}" > "${HOME}/.docker/config.json"
+}
+
 openfaas_login() {
   local PASSWORD=$(cat "${GITHUB_WORKSPACE}/core/terraform.tfstate" | jq -r '.resources[] | select(.name == "password") | .instances[].attributes.result')
   faas-cli \
@@ -112,10 +121,8 @@ openfaas_invokeFunc() {
 curl -sSL https://cli.openfaas.com | sudo sh
 
 # Grant permission to container registry
-echo "INFO: make docker directory"
-mkdir -p "${HOME}/.docker/"
-echo "INFO: creating docker config"
-echo "{\"auths\":{\"registry.digitalocean.com\":{\"auth\":\"${DO_REGISTRY_AUTH}\"}}}" > "${HOME}/.docker/config.json"
+echo "INFO: authenticate docker"
+docker_auth
 
 # Repo root
 cd ".."
