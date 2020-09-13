@@ -89,7 +89,8 @@ openfaas_deploy() {
   faas-cli \
     deploy \
     --yaml "${FILENAME}" \
-    --tag sha
+    --tag sha \
+    --tls-no-verify
 }
 
 openfaas_setSecret() {
