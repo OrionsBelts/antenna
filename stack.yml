@@ -20,6 +20,6 @@ functions:
     image: ${REGISTRY_USER:-orionsbelts}/slack:latest
     readonly_root_filesystem: true
     secrets:
-      - SLACK_CLIENT_ID
-      - SLACK_CLIENT_SECRET
-      - SLACK_STATE_SECRET
+      - slack-client-id
+      - slack-client-secret
+      - slack-state-secret
