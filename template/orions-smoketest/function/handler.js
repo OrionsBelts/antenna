@@ -4,7 +4,7 @@ const fetchSecret = require('./common/utils/fetchSecret')
 
 module.exports = async (event, context) => {
   try {
-    const SOME_SECRET = fetchSecret('SOME_SECRET')
+    const SOME_SECRET = fetchSecret('some-secret')
 
     const result = {
       event,
