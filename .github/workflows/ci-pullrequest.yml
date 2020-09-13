@@ -146,4 +146,19 @@ jobs:
         working-directory: ./core
         env:
           TF_VAR_do_subdomain: ${{ format('{0}.{1}', env.COMMITISH, secrets.STAGING_SUBDOMAIN) }}
-        run: terraform destroy -auto-approve
+        run: |
+          # Teardown/Cleanup Environment
+          terraform destroy -auto-approve
+          DIGEST=$(curl -s \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${TF_VAR_do_token}" \
+            "https://api.digitalocean.com/v2/registry/depot/repositories/smoketest/tags" \
+          | \
+          jq -r \
+            --arg SHA "${COMMITISH}" \
+            '.tags[] | select(.tag == "latest-$SHA") | .manifest_digest')
+          curl -s \
+            -X DELETE \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${TF_VAR_do_token}" \
+            "https://api.digitalocean.com/v2/registry/depot/repositories/smoketest/digests/${DIGEST}"
