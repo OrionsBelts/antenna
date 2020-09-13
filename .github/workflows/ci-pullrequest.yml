@@ -155,8 +155,8 @@ jobs:
             "https://api.digitalocean.com/v2/registry/depot/repositories/smoketest/tags" \
           | \
           jq -r \
-            --arg SHA "${COMMITISH}" \
-            '.tags[] | select(.tag == "latest-$SHA") | .manifest_digest')
+            --arg SHA "latest-${COMMITISH}" \
+            '.tags[] | select(.tag == $SHA) | .manifest_digest')
           curl -s \
             -X DELETE \
             -H "Content-Type: application/json" \
