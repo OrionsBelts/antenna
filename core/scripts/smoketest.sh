@@ -116,6 +116,13 @@ openfaas_invokeFunc() {
     --tls-no-verify
 }
 
+assert_equal() {
+  local actual=$1
+  local expected=$2
+  test "${actual}" == "${expected}" || \
+  (echo "FAILED - expected: \"${expected}\", actual: \"${actual}\""; exit 1)
+}
+
 # Script Logic
 
 # Install `faas-cli`
@@ -165,7 +172,7 @@ RESULT=$(openfaas_invokeFunc "${FUNC_NAME}")
 
 # Validate function has access to secret
 echo "INFO: validate function result"
-ACTUAL_VALUE=$(echo "${RESULT}" | jq '.data')
-[[ "${ACTUAL_VALUE}" != "successfully read ${SECRET_VALUE}" ]] && \
-echo "Secret Test Failed" && \
-exit 1
+ACTUAL_VALUE=$(echo "${RESULT}" | jq -r '.data')
+EXPECTED_VALUE="successfully read ${SECRET_VALUE}"
+
+assert_equal "${ACTUAL_VALUE}" "${EXPECTED_VALUE}"
