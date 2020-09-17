@@ -80,7 +80,7 @@ resource "digitalocean_droplet" "faasd" {
 
 resource "digitalocean_firewall" "faasd" {
   droplet_ids = [digitalocean_droplet.faasd.id]
-  name        = "open-web-default-ssh"
+  name        = "open-web-default-ssh.${var.do_subdomain}"
   depends_on  = [digitalocean_droplet.faasd]
 
   # SSH rules
