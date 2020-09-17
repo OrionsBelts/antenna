@@ -1,4 +1,4 @@
-# cloud-config
+#cloud-config
 ssh_authorized_keys:
   - ${ssh_key}
 
@@ -56,5 +56,5 @@ runcmd:
 - wget https://raw.githubusercontent.com/caddyserver/dist/master/init/caddy.service -O /etc/systemd/system/caddy.service
 - systemctl daemon-reload
 - systemctl enable caddy
-- sleep 15s
+- sleep 5s
 - systemctl start caddy
