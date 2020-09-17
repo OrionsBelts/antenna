@@ -33,7 +33,7 @@ openfaas_login() {
     --username admin \
     --password "${password}" \
     --gateway "${gateway}" \
-    "${tls_flag}"
+    ${tls_flag}
 }
 
 openfaas_createFunc() {
@@ -58,7 +58,7 @@ openfaas_build() {
   faas-cli \
     build \
     --yaml "${filename}" \
-    "${tag_flag}"
+    ${tag_flag}
 }
 
 openfaas_push() {
@@ -69,7 +69,7 @@ openfaas_push() {
   faas-cli \
     push \
     --yaml "${filename}" \
-    "${tag_flag}"
+    ${tag_flag}
 }
 
 openfaas_deploy() {
@@ -82,8 +82,8 @@ openfaas_deploy() {
   faas-cli \
     deploy \
     --yaml "${filename}" \
-    "${tag_flag}" \
-    "${tls_flag}"
+    ${tag_flag} \
+    ${tls_flag}
 }
 
 openfaas_setSecret() {
@@ -99,7 +99,7 @@ openfaas_setSecret() {
     "${key}" \
     --from-literal="${value}" \
     --gateway="${gateway}" \
-    "${tls_flag}"
+    ${tls_flag}
 }
 
 openfaas_invokeFunc() {
@@ -112,7 +112,7 @@ openfaas_invokeFunc() {
     invoke \
     "${name}" \
     --gateway "${gateway}" \
-    "${tls_flag}"
+    ${tls_flag}
 }
 
 # Testing Helpers
