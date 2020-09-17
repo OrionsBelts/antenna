@@ -69,8 +69,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
-          with:
-            ref: master
+        with:
+          ref: master
 
       - name: Install dependencies
         run: |
