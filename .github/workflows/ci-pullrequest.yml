@@ -9,6 +9,7 @@ on:
       - 'synchronize'
 
 env:
+  ENVIRONMENT: staging
   TF_VAR_do_create_record: true
   TF_VAR_do_domain: ${{ secrets.STAGING_DOMAIN }}
   TF_VAR_do_ipv4_float: ${{ secrets.STAGING_IPV4 }}
@@ -55,7 +56,7 @@ jobs:
       - name: Fetch Public SSH key
         env:
           DO_API_TOKEN: ${{ secrets.DO_API_TOKEN }}
-          SSH_KEY_NAME: ${{ secrets.PROD_DO_SSH_KEY_NAME }}
+          SSH_KEY_NAME: ${{ secrets.STAGING_DO_SSH_KEY_NAME }}
         working-directory: ./core
         run: scripts/fetch-sshkey.sh
 
@@ -96,14 +97,16 @@ jobs:
           # Installing dependecies
           pip3 install yq
           echo "::add-path::/home/runner/.local/bin"
+          curl -sSL https://cli.openfaas.com | sudo sh
           # Check versions; validate deps
           jq --version
           /home/runner/.local/bin/yq --version
+          faas-cli --version
 
       - name: Fetch Public SSH key
         env:
           DO_API_TOKEN: ${{ secrets.DO_API_TOKEN }}
-          SSH_KEY_NAME: ${{ secrets.PROD_DO_SSH_KEY_NAME }}
+          SSH_KEY_NAME: ${{ secrets.STAGING_DO_SSH_KEY_NAME }}
         working-directory: ./core
         run: scripts/fetch-sshkey.sh
 
