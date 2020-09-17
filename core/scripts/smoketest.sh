@@ -31,7 +31,7 @@ SECRET_KEY="some-secret"
 SECRET_VALUE="super-secret-value"
 
 # Import Common Utils
-source ./common.sh
+source "${GITHUB_WORKSPACE}/core/scripts/common.sh"
 
 # Grant permission to container registry
 echo "INFO: authenticate docker"
