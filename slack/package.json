@@ -1,0 +1,23 @@
+{
+  "name": "function",
+  "version": "1.0.0",
+  "description": "Slack app function handler",
+  "main": "handler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Michael Perrotte <mike@mikecorp.ca>",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^7.7.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "tap": "^14.10.8"
+  },
+  "dependencies": {
+    "@slack/oauth": "^1.2.0"
+  }
+}
