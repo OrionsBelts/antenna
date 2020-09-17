@@ -126,7 +126,7 @@ resource "digitalocean_floating_ip_assignment" "faasd-ipv4" {
   count      = var.environment == "production" ? 1 : 0
 }
 
-resource "digitalocean_record" "faasd" {
+resource "digitalocean_record" "faasd-production" {
   domain = var.do_domain
   type   = "A"
   name   = var.do_subdomain
@@ -135,7 +135,7 @@ resource "digitalocean_record" "faasd" {
   count = var.environment == "production" ? 1 : 0
 }
 
-resource "digitalocean_record" "faasd" {
+resource "digitalocean_record" "faasd-staging" {
   domain = var.do_domain
   type   = "A"
   name   = var.do_subdomain
