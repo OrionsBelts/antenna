@@ -9,11 +9,6 @@ configuration:
     - ./common
 
 functions:
-  status-util:
-    lang: orions-node12
-    handler: ./status-util
-    image: ${REGISTRY_USER:-orionsbelts}/status-util:latest
-    readonly_root_filesystem: true
   slack:
     lang: orions-node12
     handler: ./slack
