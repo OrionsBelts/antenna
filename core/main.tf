@@ -7,10 +7,6 @@ provider "digitalocean" {
 }
 
 # - Variables
-variable "do_create_record" {
-  default     = true
-  description = "Whether to create a DNS record on Digitalocean"
-}
 variable "do_domain" {
   description = "Your public domain"
 }
@@ -32,6 +28,9 @@ variable "do_subdomain" {
 }
 variable "do_token" {
   description = "Digitalocean API token"
+}
+variable "environment" {
+  description = "Deployment environment; equal to the ENVIRONMENT environment variable."
 }
 variable "letsencrypt_email" {
   description = "Email used to order a certificate from Letsencrypt"
@@ -124,6 +123,7 @@ resource "digitalocean_floating_ip_assignment" "faasd-ipv4" {
   ip_address = var.do_ipv4_float
   droplet_id = digitalocean_droplet.faasd.id
   depends_on = [digitalocean_droplet.faasd]
+  count      = var.environment == "production" ? 1 : 0
 }
 
 resource "digitalocean_record" "faasd" {
@@ -131,8 +131,17 @@ resource "digitalocean_record" "faasd" {
   type   = "A"
   name   = var.do_subdomain
   value  = var.do_ipv4_float
-  # Only creates record if do_create_record is true
-  # count = var.do_create_record == true ? 1 : 0
+  # Creates record for floating ipv4
+  count = var.environment == "production" ? 1 : 0
+}
+
+resource "digitalocean_record" "faasd" {
+  domain = var.do_domain
+  type   = "A"
+  name   = var.do_subdomain
+  value  = digitalocean_droplet.faasd.ipv4_address
+  # Creates record for dynamic ipv4
+  count = var.environment == "staging" ? 1 : 0
 }
 
 resource "random_password" "password" {
