@@ -101,7 +101,7 @@ jobs:
           # Check versions; validate deps
           jq --version
           /home/runner/.local/bin/yq --version
-          faas-cli --version
+          faas-cli version
 
       - name: Fetch Public SSH key
         env:
