@@ -1,0 +1,128 @@
+---
+name: Deployment
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - master
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_ID }}
+  AWS_DEFAULT_REGION: ${{ secrets.DO_SPACES_REGION }}
+  DO_SPACES_REGION: ${{ secrets.DO_SPACES_REGION }}
+  DO_SPACES_URI: ${{ secrets.DO_SPACES_URI }}
+  LOCATION: master
+  ENVIRONMENT: production
+  TF_VAR_do_create_record: true
+  TF_VAR_do_domain: ${{ secrets.PROD_DOMAIN }}
+  TF_VAR_do_ipv4_float: ${{ secrets.PROD_IPV4 }}
+  TF_VAR_do_region: ${{ secrets.PROD_REGION }}
+  TF_VAR_do_registry_auth: ${{ secrets.DO_CONTAINER_REGISTRY_AUTH_TOKEN }}
+  TF_VAR_do_ssh_key: ${{ secrets.PROD_DO_SSH_KEY_NAME }}
+  TF_VAR_do_token: ${{ secrets.DO_API_TOKEN }}
+  TF_VAR_letsencrypt_email: ${{ secrets.PROD_LETSENCRYPT_EMAIL }}
+  TF_VAR_ssh_key_file: "${{ secrets.PROD_DO_SSH_KEY_NAME }}.pub"
+  TF_VAR_cloud_template: cloud-config-prod.tpl
+  TF_IN_AUTOMATION: true
+  TF_INPUT: false
+
+jobs:
+  validate:
+    name: Validations
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          # Installing dependecies
+          pip3 install yq
+          echo "::add-path::/home/runner/.local/bin"
+          # Check versions; validate deps
+          jq --version
+          /home/runner/.local/bin/yq --version
+
+      - name: Run secret validation
+        env:
+          SECRETS: ${{ toJson(secrets) }}
+        working-directory: ./core
+        run: scripts/validate-secrets.sh
+
+      - name: Validate terraform
+        working-directory: ./core
+        run: terraform validate
+
+      # NOTE: This command will validate variables are present/correct
+      - name: Plan terraform
+        working-directory: ./core
+        run: terraform plan
+
+  deploy:
+    name: Deploy Production
+    if: github.event.pull_request.merged
+    runs-on: ubuntu-20.04
+    needs:
+      - validate
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+          with:
+            ref: master
+
+      - name: Install dependencies
+        run: |
+          # Installing dependecies
+          pip3 install yq
+          echo "::add-path::/home/runner/.local/bin"
+          curl -sSL https://cli.openfaas.com | sudo sh
+          # Check versions; validate deps
+          aws --version
+          jq --version
+          /home/runner/.local/bin/yq --version
+          faas-cli version
+
+      - name: Fetch ssh public key
+        env:
+          DO_API_TOKEN: ${{ secrets.DO_API_TOKEN }}
+          SSH_KEY_NAME: ${{ secrets.PROD_DO_SSH_KEY_NAME }}
+        working-directory: ./core
+        run: scripts/fetch-sshkey.sh
+
+      - name: Initiate terraform
+        working-directory: ./core
+        run: terraform init
+
+      - name: Fetch terraform state
+        working-directory: ./core
+        run: scripts/manage-state.sh pull
+
+      - name: Teardown environment
+        working-directory: ./core
+        run: terraform destroy -auto-approve
+
+      - name: Create environment
+        working-directory: ./core
+        run: terraform apply -auto-approve
+
+      - name: Wait for System
+        timeout-minutes: 10
+        working-directory: ./core
+        run: scripts/online-check.sh
+
+      - name: Initialize secrets
+        working-directory: ./core
+        run: scripts/init-secrets.sh
+
+      - name: Deploy functions
+        working-directory: ./core
+        env:
+          REGISTRY_USER: ${{ secrets.DO_CONTAINER_REGISTRY_PREFIX }}
+          DO_REGISTRY_AUTH: ${{ secrets.DO_CONTAINER_REGISTRY_AUTH_TOKEN }}
+        run: scripts/deploy.sh
+
+      - name: Fetch terraform state
+        working-directory: ./core
+        run: scripts/manage-state.sh pull
