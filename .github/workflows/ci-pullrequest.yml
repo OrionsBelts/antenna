@@ -10,13 +10,13 @@ on:
 
 env:
   ENVIRONMENT: staging
-  TF_VAR_do_create_record: true
   TF_VAR_do_domain: ${{ secrets.STAGING_DOMAIN }}
   TF_VAR_do_ipv4_float: ${{ secrets.STAGING_IPV4 }}
   TF_VAR_do_region: ${{ secrets.STAGING_REGION }}
   TF_VAR_do_registry_auth: ${{ secrets.DO_CONTAINER_REGISTRY_AUTH_TOKEN }}
   TF_VAR_do_ssh_key: ${{ secrets.STAGING_DO_SSH_KEY_NAME }}
   TF_VAR_do_token: ${{ secrets.DO_API_TOKEN }}
+  TF_VAR_environment: staging
   TF_VAR_letsencrypt_email: ${{ secrets.STAGING_LETSENCRYPT_EMAIL }}
   TF_VAR_ssh_key_file: "${{ secrets.STAGING_DO_SSH_KEY_NAME }}.pub"
   TF_VAR_cloud_template: cloud-config-staging.tpl
