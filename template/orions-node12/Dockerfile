@@ -18,6 +18,7 @@ RUN mkdir -p /home/app
 # Wrapper/boot-strapper
 WORKDIR /home/app
 COPY package.json ./
+COPY package-lock.json ./
 
 # This ordering means the npm installation is cached for the outer function handler.
 RUN npm ci --production
