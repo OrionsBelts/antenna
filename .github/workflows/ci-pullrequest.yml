@@ -159,8 +159,8 @@ jobs:
           | \
           jq -r \
             --arg SHA "latest-${COMMITISH}" \
-            '.tags[] | select(.tag == $SHA) | .manifest_digest')
-          curl -s \
+            '.tags[]? | select(.tag == $SHA) | .manifest_digest')
+          [[ ! -z "${DIGEST}" ]] && curl -s \
             -X DELETE \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${TF_VAR_do_token}" \
