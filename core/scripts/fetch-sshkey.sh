@@ -3,8 +3,8 @@
 ##
 # Description
 #
-# Moves to the `/core` folder and downloads the public ssh key from
-# digitalocean.
+# Downloads a defined public ssh key from digitalocean. File is put in the
+# directory this script is run from.
 ##
 
 # Exit immediately if there is an error
