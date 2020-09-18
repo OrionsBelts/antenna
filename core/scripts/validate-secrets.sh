@@ -3,13 +3,17 @@
 ##
 # Description
 #
-#
+# Validates that the secrets that are listed in `stack.yml` have corresponding
+# GitHub Secrets of the same name (though formatted differently). Secrets in
+# the `stack.yml` file must be lowercase and dash separators (kebab case). The
+# key names in GitHub Secrets need to be capitalized snake case.
 ##
 
 # Exit immediately if there is an error
 set -e
 
 # Validate Environment Variables
+[[ -z "${GITHUB_WORKSPACE}" ]] && echo "Missing Env Var" && exit 1
 [[ -z "${SECRETS}" ]] && echo "Missing Env Var" && exit 1
 
 # Check to see that deps are installed
@@ -17,8 +21,7 @@ jq --version
 yq --version
 
 # Variables
-STACK_FILE="../stack.yml"
-
+STACK_FILE="${GITHUB_WORKSPACE}/stack.yml"
 
 # Check to see if the stack file is present before doing operations
 if [ ! -f "${STACK_FILE}" ]; then
@@ -26,7 +29,10 @@ if [ ! -f "${STACK_FILE}" ]; then
   exit 1
 fi
 
-FN_SECRET_LIST=$(cat "${STACK_FILE}" | yq '.functions[].secrets[]?' | jq --slurp -r '.[]')
+# Import Common Utils
+source "${GITHUB_WORKSPACE}/core/scripts/common.sh"
+
+FN_SECRET_LIST=$(local_fetchSecrets "${STACK_FILE}")
 
 # Fetch secret names from GitHub
 GITHUB_SECRETS=$(echo "${SECRETS}" | jq -r 'keys[]')
@@ -37,10 +43,11 @@ ERROR_SECRETS=""
 for FN_SECRET in ${FN_SECRET_LIST}; do
   KEY_EXISTS="false"
 
-  for SECRET_KEY in ${GITHUB_SECRETS}; do
-    SECRET_KEY_FORMATTED=$(echo "${SECRET_KEY}" | tr '[:upper:]' '[:lower:]' | sed s/_/-/g)
+  for GH_SECRET_KEY in ${GITHUB_SECRETS}; do
+    # INFO(mperrotte): convert GH key format to openfaas secret key format
+    GH_SECRET_KEY_FORMATTED=$(fmt_githubToOpenfaas "${GH_SECRET_KEY}")
 
-    if [ ${FN_SECRET} == ${SECRET_KEY_FORMATTED} ]; then
+    if [ ${FN_SECRET} == ${GH_SECRET_KEY_FORMATTED} ]; then
       # INFO(mperrotte): secret exists
       KEY_EXISTS="true"
       break
