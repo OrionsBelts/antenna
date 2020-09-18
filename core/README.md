@@ -40,20 +40,21 @@ Configure terraform variables as needed by updating the `main.tfvars` file:
 #### Repository Variables
 | Variable     | Description         | Default         |
 | ------------ | ------------------- | --------------- |
-| `PROD_DOMAIN` | "" | None |
+| `PROD_DOMAIN` | "" | "`orionsbelt.ca`" |
 | `PROD_DO_SSH_KEY_NAME` | "" | None |
 | `PROD_IPV4` | "" | None |
 | `PROD_LETSENCRYPT_EMAIL` | "" | None |
-| `PROD_REGION` | "" | None |
+| `PROD_REGION` | "" | `nyc2` |
+| `PROD_SUBDOMAIN` | "" | `antenna` |
 | `SLACK_CLIENT_ID` | "" | None |
 | `SLACK_CLIENT_SECRET` | "" | None |
 | `SLACK_STATE_SECRET` | "" | None |
-| `STAGING_DOMAIN` | "" | None |
+| `STAGING_DOMAIN` | "" | "`orionsbelt.ca`" |
 | `STAGING_DO_SSH_KEY_NAME` | "" | None |
 | `STAGING_IPV4` | "" | None |
 | `STAGING_LETSENCRYPT_EMAIL` | "" | None |
-| `STAGING_REGION` | "" | None |
-| `STAGING_SUBDOMAIN` | "" | None |
+| `STAGING_REGION` | "" | `nyc1` |
+| `STAGING_SUBDOMAIN` | "" | `staging` |
 
 
 ## Terraform Output
