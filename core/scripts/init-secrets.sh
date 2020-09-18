@@ -18,6 +18,7 @@ yq --version
 [[ -z "${GITHUB_WORKSPACE}" ]] && echo "Missing Env Var" && exit 1
 [[ -z "${TF_VAR_do_subdomain}" ]] && echo "Missing Env Var" && exit 1
 [[ -z "${TF_VAR_do_domain}" ]] && echo "Missing Env Var" && exit 1
+[[ -z "${SECRETS}" ]] && echo "Missing Env Var" && exit 1
 
 # Global Variables
 STACK_FILE="${GITHUB_WORKSPACE}/stack.yml"
