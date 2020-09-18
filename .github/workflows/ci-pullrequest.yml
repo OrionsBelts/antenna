@@ -25,7 +25,7 @@ env:
 
 jobs:
   secrets:
-    name: Validate Secrets
+    name: "[PR] Validate Secrets"
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout repo
@@ -47,7 +47,7 @@ jobs:
         run: scripts/validate-secrets.sh
 
   terraform:
-    name: Validate Terraform
+    name: "[PR] Validate Terraform"
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout repo
@@ -83,7 +83,7 @@ jobs:
         run: terraform plan
 
   smoketest:
-    name: Smoke Test
+    name: "[PR] Smoke Test"
     runs-on: ubuntu-20.04
     needs:
       - secrets
