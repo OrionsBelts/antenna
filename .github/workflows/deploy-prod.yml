@@ -46,6 +46,13 @@ jobs:
           jq --version
           /home/runner/.local/bin/yq --version
 
+      - name: Fetch ssh public key
+        env:
+          DO_API_TOKEN: ${{ secrets.DO_API_TOKEN }}
+          SSH_KEY_NAME: ${{ secrets.PROD_DO_SSH_KEY_NAME }}
+        working-directory: ./core
+        run: scripts/fetch-sshkey.sh
+
       - name: Run secret validation
         env:
           SECRETS: ${{ toJson(secrets) }}
