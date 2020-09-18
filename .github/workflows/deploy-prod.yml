@@ -134,7 +134,6 @@ jobs:
         working-directory: ./core
         env:
           REGISTRY_USER: ${{ secrets.DO_CONTAINER_REGISTRY_PREFIX }}
-          DO_REGISTRY_AUTH: ${{ secrets.DO_CONTAINER_REGISTRY_AUTH_TOKEN }}
         run: scripts/deploy.sh
 
       - name: Push terraform state
