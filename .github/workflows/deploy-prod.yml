@@ -125,4 +125,4 @@ jobs:
 
       - name: Fetch terraform state
         working-directory: ./core
-        run: scripts/manage-state.sh pull
+        run: scripts/manage-state.sh push
