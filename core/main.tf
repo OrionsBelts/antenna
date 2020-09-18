@@ -46,7 +46,7 @@ variable "cloud_template" {
 data "digitalocean_droplet" "vpn" {
   name = "barnards-loop"
 }
-data "digitalocean_floating_ip" "staging-ipv4-address" {
+data "digitalocean_floating_ip" "ipv4-address" {
   ip_address = var.do_ipv4_float
 }
 data "digitalocean_ssh_key" "main" {
