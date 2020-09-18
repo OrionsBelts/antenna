@@ -115,6 +115,24 @@ openfaas_invokeFunc() {
     ${tls_flag}
 }
 
+local_fetchSecrets() {
+  local stackfile=$1
+  local result=$(cat "${stackfile}" | yq -r '.functions[].secrets[]?')
+  echo "${result}"
+}
+
+fmt_githubToOpenfaas() {
+  local key=$1
+  local fmt=$(echo "${key}" | tr '[:upper:]' '[:lower:]' | sed s/_/-/g)
+  echo "${fmt}"
+}
+
+fmt_openfassToGithub() {
+  local key=$1
+  local fmt=$(echo "${key}" | tr '[:lower:]' '[:upper:]' | sed s/-/_/g)
+  echo "${fmt}"
+}
+
 # Testing Helpers
 openfaas_updateFuncYaml() {
   local filename=$1
