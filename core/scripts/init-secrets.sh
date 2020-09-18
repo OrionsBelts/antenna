@@ -41,7 +41,7 @@ FN_SECRET_LIST=$(local_fetchSecrets "${STACK_FILE}")
 
 # Create secrets in open-faas instance
 for SECRET_KEY in ${FN_SECRET_LIST}; do
-  SECRET_KEY_FORMATTED=$(echo "${SECRET_KEY}" | tr '[:lower:]' '[:upper:]' | sed s/-/_/g)
+  SECRET_KEY_FORMATTED=$(fmt_openfassToGithub "${SECRET_KEY}")
 
   SECRET_VALUE=$(echo "${SECRETS}" | jq -r --arg KEY "${SECRET_KEY_FORMATTED}" '.[$KEY]')
   echo "Adding secret: ${SECRET_KEY}.."
