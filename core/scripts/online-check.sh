@@ -15,12 +15,14 @@ set -e
 [[ -z "${TF_VAR_do_domain}" ]] && echo "Missing Env Var" && exit 1
 
 # Vaildate Required Files
-[[ ! -f fakelerootx1.pem ]] && echo "Missing File" && exit 1
 [[ ! -f terraform.tfstate ]] && echo "Missing File" && exit 1
+[[ "${ENVIRONMENT}" == "staging" ]] && [[ ! -f fakelerootx1.pem ]] && echo "Missing File" && exit 1
 
 PASSWORD=$(cat terraform.tfstate | jq -r '.resources[] | select(.name == "password") | .instances[].attributes.result')
 DOMAIN="${TF_VAR_do_subdomain}.${TF_VAR_do_domain}"
 INSTANCE_URI="https://${DOMAIN}/ui/"
+CERT_FLAG=""
+[[ "${ENVIRONMENT}" == "staging" ]] && CERT_FLAG="--cacert fakelerootx1.pem"
 
 echo "Waiting for ${INSTANCE_URI}"
 
@@ -31,7 +33,7 @@ until $(
     --fail \
     --output /dev/null \
     --max-time 3 \
-    --cacert fakelerootx1.pem \
+    ${CERT_FLAG} \
     --user "admin:${PASSWORD}" \
     "${INSTANCE_URI}"
 ); do
