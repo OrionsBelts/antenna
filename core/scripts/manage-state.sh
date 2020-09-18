@@ -23,7 +23,7 @@ aws --version
 [[ -z "${LOCATION}" ]] && echo "Missing Env Var" && exit 1
 
 # Global Variables
-ENDPOINT_FLAG="--endpoint-url=https://${DO_SPACES_REGION}.digitalocean.com"
+ENDPOINT_FLAG="--endpoint-url=https://${DO_SPACES_REGION}.digitaloceanspaces.com"
 STATE_FILE="terraform.tfstate"
 BASE_URI="s3://orionsbelt/tfstate/${LOCATION}"
 
