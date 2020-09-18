@@ -126,6 +126,8 @@ jobs:
 
       - name: Initialize secrets
         working-directory: ./core
+        env:
+          SECRETS: ${{ toJson(secrets) }}
         run: scripts/init-secrets.sh
 
       - name: Deploy functions
