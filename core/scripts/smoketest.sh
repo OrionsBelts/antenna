@@ -3,7 +3,12 @@
 ##
 # Description
 #
-#
+# This script will log into the docker registry in digitalocean as well as
+# auth with the openfaas instance that's deployed. It will instanciate a
+# smoketest function (build, push, and deploy) designed to pull a secret from
+# the environment and return a value. That secret will be created and the
+# function will invoked, and the response is validated. If all things exit
+# successfully, this script will pass.
 ##
 
 # Exit immediately if there is an error
