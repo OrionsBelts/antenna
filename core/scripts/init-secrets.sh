@@ -3,7 +3,8 @@
 ##
 # Description
 #
-#
+# Script which reads all secrets needed for functions, pulls their values from
+# GitHub secrets and then creates them in the openfaas instance.
 ##
 
 # Exit immediately if there is an error
