@@ -31,7 +31,7 @@ env:
 
 jobs:
   validate:
-    name: Validations
+    name: "[DEPLOY] Validations"
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout repo
@@ -66,7 +66,7 @@ jobs:
         run: terraform plan
 
   deploy:
-    name: Deploy Production
+    name: "[DEPLOY] Production"
     if: github.event.pull_request.merged
     runs-on: ubuntu-20.04
     needs:
