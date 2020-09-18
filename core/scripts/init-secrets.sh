@@ -37,7 +37,7 @@ echo "INFO: login to openfaas"
 openfaas_login "${GITHUB_WORKSPACE}/core/terraform.tfstate" "${GATEWAY_URI}"
 
 # Collect **NEEDED** secret keys
-FN_SECRET_LIST=$(cat "${STACK_FILE}" | yq -r '.functions[].secrets[]?')
+FN_SECRET_LIST=$(local_fetchSecrets "${STACK_FILE}")
 
 # Create secrets in open-faas instance
 for SECRET_KEY in ${FN_SECRET_LIST}; do
