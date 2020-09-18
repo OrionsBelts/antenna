@@ -16,7 +16,6 @@ set -e
 [[ -z "${TF_VAR_do_domain}" ]] && echo "Missing Env Var" && exit 1
 [[ -z "${TF_VAR_do_token}" ]] && echo "Missing Env Var" && exit 1
 [[ -z "${REGISTRY_USER}" ]] && echo "Missing Env Var" && exit 1
-[[ -z "${DO_REGISTRY_AUTH}" ]] && echo "Missing Env Var" && exit 1
 
 # Global Variables
 DOMAIN="${TF_VAR_do_subdomain}.${TF_VAR_do_domain}"
@@ -32,7 +31,7 @@ cd "${GITHUB_WORKSPACE}"
 
 # Grant permission to container registry
 echo "INFO: authenticate docker"
-docker_auth "${DO_REGISTRY_AUTH}"
+docker_auth "${TF_VAR_do_token}"
 
 # Login to instance
 echo "INFO: login to openfaas"

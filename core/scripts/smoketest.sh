@@ -20,7 +20,6 @@ set -e
 [[ -z "${TF_VAR_do_domain}" ]] && echo "Missing Env Var" && exit 1
 [[ -z "${TF_VAR_do_token}" ]] && echo "Missing Env Var" && exit 1
 [[ -z "${FUNCTION_PREFIX}" ]] && echo "Missing Env Var" && exit 1
-[[ -z "${DO_REGISTRY_AUTH}" ]] && echo "Missing Env Var" && exit 1
 
 # Check to see that deps are installed
 jq --version
