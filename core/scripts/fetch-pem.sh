@@ -3,8 +3,8 @@
 ##
 # Description
 #
-# Moves to the `/core` folder and downloads the PEM key for letsencrypt's
-# staging endpoint.
+# Downloads the PEM key for letsencrypt's staging endpoint. File is saved to
+# the directory the script is run from.
 ##
 
 # Exit immediately if there is an error
