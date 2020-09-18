@@ -72,7 +72,7 @@ resource "digitalocean_droplet" "faasd" {
   name               = "faasd.${var.do_subdomain}"
   private_networking = true
   region             = var.do_region
-  size               = var.environment == "production" ? "s-1vcpu-1gb" : "s-2vcpu-2gb"
+  size               = "s-1vcpu-1gb"
   ssh_keys           = [data.digitalocean_ssh_key.main.id]
   user_data          = data.template_file.cloud_init.rendered
 }
