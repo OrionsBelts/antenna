@@ -3,7 +3,9 @@
 ##
 # Description
 #
-#
+# This script will push or pull a terraform statefile from a digitalocean
+# space (bucket). Given the parameter "push" or "pull" as an argument to this
+# script it will act accordingly.
 ##
 
 # Exit immediately if there is an error
