@@ -51,6 +51,10 @@ jobs:
         working-directory: ./core
         run: scripts/validate-secrets.sh
 
+      - name: Initiate terraform
+        working-directory: ./core
+        run: terraform init
+
       - name: Validate terraform
         working-directory: ./core
         run: terraform validate
