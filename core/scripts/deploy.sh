@@ -3,7 +3,8 @@
 ##
 # Description
 #
-#
+# Script builds, pushes, and deploys all functions in the main `stack.yml` file.
+# All docker images will be tagged as `latest` in the container registry.
 ##
 
 # Exit immediately if there is an error
