@@ -83,7 +83,7 @@ jobs:
         run: terraform plan
 
   smoketest:
-    name: "[PR] Smoke Test"
+    name: "[PR] Integration Smoke Test"
     runs-on: ubuntu-20.04
     needs:
       - secrets
@@ -135,7 +135,7 @@ jobs:
           TF_VAR_do_subdomain: ${{ format('{0}.{1}', env.COMMITISH, secrets.STAGING_SUBDOMAIN) }}
         run: scripts/online-check.sh
 
-      - name: Test environment
+      - name: Smoketest environment
         if: ${{ success() }}
         working-directory: ./core
         env:
@@ -143,24 +143,51 @@ jobs:
           FUNCTION_PREFIX: ${{ secrets.DO_CONTAINER_REGISTRY_PREFIX }}
         run: scripts/smoketest.sh
 
+      - name: Cleanup smoketest
+        if: ${{ success() }}
+        working-directory: ./core
+        env:
+          TF_VAR_do_subdomain: ${{ format('{0}.{1}', env.COMMITISH, secrets.STAGING_SUBDOMAIN) }}
+          FUNCTION_PREFIX: ${{ secrets.DO_CONTAINER_REGISTRY_PREFIX }}
+        run: scripts/cleanup.sh "smoketest" "latest-${COMMITISH}"
+
+      - name: Test deploy functions
+        if: ${{ success() }}
+        working-directory: ./core
+        env:
+          TF_VAR_do_subdomain: ${{ format('{0}.{1}', env.COMMITISH, secrets.STAGING_SUBDOMAIN) }}
+          DO_SUBDOMAIN: ${{ format('{0}.{1}', env.COMMITISH, secrets.STAGING_SUBDOMAIN) }}
+          REGISTRY_USER: ${{ secrets.DO_CONTAINER_REGISTRY_PREFIX }}
+        run: scripts/deploy.sh
+
+      - name: Test functions
+        if: ${{ success() }}
+        env:
+          TF_VAR_do_subdomain: ${{ format('{0}.{1}', env.COMMITISH, secrets.STAGING_SUBDOMAIN) }}
+          DO_SUBDOMAIN: ${{ format('{0}.{1}', env.COMMITISH, secrets.STAGING_SUBDOMAIN) }}
+          REGISTRY_USER: ${{ secrets.DO_CONTAINER_REGISTRY_PREFIX }}
+        run: npm run test:integration
+
+      - name: Cleanup test functions
+        if: ${{ success() }}
+        working-directory: ./core
+        env:
+          TF_VAR_do_subdomain: ${{ format('{0}.{1}', env.COMMITISH, secrets.STAGING_SUBDOMAIN) }}
+          DO_SUBDOMAIN: ${{ format('{0}.{1}', env.COMMITISH, secrets.STAGING_SUBDOMAIN) }}
+          REGISTRY_USER: ${{ secrets.DO_CONTAINER_REGISTRY_PREFIX }}
+        run: |
+          # Cleanup test functions
+          # Import Common Utils
+          source "${GITHUB_WORKSPACE}/core/scripts/common.sh"
+          STACK_FILE="${GITHUB_WORKSPACE}/stack.yml"
+          FUNC_LIST=$(local_fetchFunctions "${STACK_FILE}")
+          for FUNC_NAME in ${FUNC_LIST}; do
+            ${GITHUB_WORKSPACE}/core/scripts/cleanup.sh "${FUNC_NAME}" "latest-${COMMITISH}"
+          done
+
       - name: Teardown environment
         if: ${{ always() }}
         working-directory: ./core
         env:
           TF_VAR_do_subdomain: ${{ format('{0}.{1}', env.COMMITISH, secrets.STAGING_SUBDOMAIN) }}
-        run: |
-          # Teardown/Cleanup Environment
-          terraform destroy -auto-approve
-          DIGEST=$(curl -s \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer ${TF_VAR_do_token}" \
-            "https://api.digitalocean.com/v2/registry/depot/repositories/smoketest/tags" \
-          | \
-          jq -r \
-            --arg SHA "latest-${COMMITISH}" \
-            '.tags[]? | select(.tag == $SHA) | .manifest_digest')
-          [[ ! -z "${DIGEST}" ]] && curl -s \
-            -X DELETE \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer ${TF_VAR_do_token}" \
-            "https://api.digitalocean.com/v2/registry/depot/repositories/smoketest/digests/${DIGEST}"
+        run: terraform destroy -auto-approve
