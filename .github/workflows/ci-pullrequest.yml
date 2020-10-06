@@ -82,6 +82,27 @@ jobs:
           TF_VAR_do_subdomain: ${{ format('{0}.{1}', env.COMMITISH, secrets.STAGING_SUBDOMAIN) }}
         run: terraform plan
 
+  testing:
+    name: "[PR] Unit Test"
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          # Installing dependecies
+          pip3 install yq
+          echo "::add-path::/home/runner/.local/bin"
+          curl -sSL https://cli.openfaas.com | sudo sh
+          # Check versions; validate deps
+          jq --version
+          /home/runner/.local/bin/yq --version
+          faas-cli version
+
+      - name: Test functions
+        run: npm run test:unit
+
   smoketest:
     name: "[PR] Integration Smoke Test"
     runs-on: ubuntu-20.04
