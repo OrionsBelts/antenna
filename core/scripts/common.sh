@@ -169,6 +169,12 @@ local_fetchSecrets() {
   echo "${result}"
 }
 
+local_fetchFunctions() {
+  local stackfile=$1
+  local result=$(cat "${stackfile}" | yq -r '.functions | keys[]')
+  echo "${result}"
+}
+
 fmt_githubToOpenfaas() {
   local key=$1
   local fmt=$(echo "${key}" | tr '[:upper:]' '[:lower:]' | sed s/_/-/g)
