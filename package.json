@@ -1,0 +1,25 @@
+{
+  "name": "antenna",
+  "version": "1.0.0",
+  "description": "Repository for deploying functions to openfaas platform",
+  "scripts": {
+    "build:dev": "[[ ! -z \"${REGISTRY_USER}\" ]] && faas-cli build --yaml stack.yml --tag sha || npm run error",
+    "push:dev": "[[ ! -z \"${REGISTRY_USER}\" ]] && faas-cli push --yaml stack.yml --tag sha || npm run error",
+    "error": "echo \"Error running script\" && exit 1",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:unit": "echo \"Running: Unit Tests\" && exit 0",
+    "test:integration": "echo \"Running: Integration Tests\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OrionsBelts/antenna.git"
+  },
+  "keywords": [],
+  "author": "Michael Perrotte <mike@mikecorp.ca>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/OrionsBelts/antenna/issues"
+  },
+  "homepage": "https://github.com/OrionsBelts/antenna#readme",
+  "dependencies": {}
+}
