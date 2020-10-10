@@ -8,6 +8,8 @@
 # `source` this file **AFTER** the environment variable check in a script.
 ##
 
+DO_API_URL="https://api.digitalocean.com/v2"
+
 # Function Declarations
 docker_auth() {
   local token=$1
@@ -16,8 +18,55 @@ docker_auth() {
   local AUTH=$(curl -s \
     -H "Content-Type: application/json" \
     -H "Authorization: Bearer ${token}" \
-    "https://api.digitalocean.com/v2/registry/docker-credentials?read_write=true")
+    "${DO_API_URL}/registry/docker-credentials?read_write=true")
   echo "${AUTH}" > "${HOME}/.docker/config.json"
+}
+
+docker_fetch_tags() {
+  local token=$1
+  local repository_name=$2
+
+  curl -s \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer ${token}" \
+    "${DO_API_URL}/registry/depot/repositories/${repository_name}/tags"
+}
+
+docker_fetch_tag() {
+  local token=$1
+  local repository_name=$2
+  local tag=$3
+
+  local TAGS=$(docker_fetch_tags "${token}" "${repository_name}")
+
+  echo "${TAGS}" | jq -r \
+    --arg TAGNAME "${tag}" \
+    '.tags[]? | select(.tag == $TAGNAME)'
+}
+
+docker_fetch_digestByTag() {
+  local token=$1
+  local repository_name=$2
+  local tag=$3
+
+  local TAG_DATA=$(docker_fetch_tag "${token}" "${repository_name}" "${tag}")
+
+  echo "${TAG_DATA}" | jq -r '.manifest_digest'
+}
+
+docker_delete_digest() {
+  local token=$1
+  local repository_name=$2
+  local digest=$3
+
+  # Bail if {digest} is empty
+  [[ -z "${digest}" ]] && return 0
+
+  curl -s \
+    -X DELETE \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer ${token}" \
+    "${DO_API_URL}/registry/depot/repositories/${repository_name}/digests/${digest}"
 }
 
 openfaas_login() {
@@ -118,6 +167,12 @@ openfaas_invokeFunc() {
 local_fetchSecrets() {
   local stackfile=$1
   local result=$(cat "${stackfile}" | yq -r '.functions[].secrets[]?')
+  echo "${result}"
+}
+
+local_fetchFunctions() {
+  local stackfile=$1
+  local result=$(cat "${stackfile}" | yq -r '.functions | keys[]')
   echo "${result}"
 }
 
