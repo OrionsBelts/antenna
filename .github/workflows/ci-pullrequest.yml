@@ -172,6 +172,13 @@ jobs:
           FUNCTION_PREFIX: ${{ secrets.DO_CONTAINER_REGISTRY_PREFIX }}
         run: scripts/cleanup.sh "smoketest" "latest-${COMMITISH}"
 
+      - name: Initialize secrets
+        working-directory: ./core
+        env:
+          TF_VAR_do_subdomain: ${{ format('{0}.{1}', env.COMMITISH, secrets.STAGING_SUBDOMAIN) }}
+          SECRETS: ${{ toJson(secrets) }}
+        run: scripts/init-secrets.sh
+
       - name: Test deploy functions
         if: ${{ success() }}
         working-directory: ./core
