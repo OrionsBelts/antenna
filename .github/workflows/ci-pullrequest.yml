@@ -35,7 +35,7 @@ jobs:
         run: |
           # Installing dependecies
           pip3 install yq
-          echo "::add-path::/home/runner/.local/bin"
+          echo "/home/runner/.local/bin" >> $GITHUB_PATH
           # Check versions; validate deps
           jq --version
           /home/runner/.local/bin/yq --version
@@ -73,7 +73,7 @@ jobs:
         run: terraform validate
 
       - name: Generate SHA slug
-        run: echo "::set-env name=COMMITISH::$(git rev-parse --short HEAD)"
+        run: echo "COMMITISH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
       # NOTE: This command will validate variables are present/correct
       - name: Plan terraform
@@ -93,7 +93,7 @@ jobs:
         run: |
           # Installing dependecies
           pip3 install yq
-          echo "::add-path::/home/runner/.local/bin"
+          echo "/home/runner/.local/bin" >> $GITHUB_PATH
           curl -sSL https://cli.openfaas.com | sudo sh
           # Check versions; validate deps
           jq --version
@@ -117,7 +117,7 @@ jobs:
         run: |
           # Installing dependecies
           pip3 install yq
-          echo "::add-path::/home/runner/.local/bin"
+          echo "/home/runner/.local/bin" >> $GITHUB_PATH
           curl -sSL https://cli.openfaas.com | sudo sh
           # Check versions; validate deps
           jq --version
@@ -140,7 +140,7 @@ jobs:
         run: terraform init
 
       - name: Generate SHA slug
-        run: echo "::set-env name=COMMITISH::$(git rev-parse --short HEAD)"
+        run: echo "COMMITISH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
       - name: Apply terraform
         timeout-minutes: 10
