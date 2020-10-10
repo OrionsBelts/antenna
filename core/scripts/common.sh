@@ -38,7 +38,8 @@ docker_fetch_tag() {
   local tag=$3
 
   local TAGS=$(docker_fetch_tags "${token}" "${repository_name}")
-  jq -r \
+
+  echo "${TAGS}" | jq -r \
     --arg TAGNAME "${tag}" \
     '.tags[]? | select(.tag == $TAGNAME)'
 }
