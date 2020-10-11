@@ -32,6 +32,10 @@ variable "do_token" {
 variable "environment" {
   description = "Deployment environment; equal to the ENVIRONMENT environment variable."
 }
+variable "faasd_version" {
+  default     = "0.9.5"
+  description = "Version of faasd to use"
+}
 variable "letsencrypt_email" {
   description = "Email used to order a certificate from Letsencrypt"
 }
@@ -56,13 +60,14 @@ data "local_file" "ssh_key" {
   filename = pathexpand(var.ssh_key_file)
 }
 data "template_file" "cloud_init" {
-  template = "${file("${var.cloud_template}")}"
+  template = file(var.cloud_template)
   vars = {
-    gw_password       = random_password.password.result,
-    ssh_key           = data.local_file.ssh_key.content,
     do_registry_auth  = var.do_registry_auth,
     faasd_domain_name = "${var.do_subdomain}.${var.do_domain}"
-    letsencrypt_email = var.letsencrypt_email
+    faasd_version     = var.faasd_version
+    gw_password       = random_password.password.result,
+    letsencrypt_email = var.letsencrypt_email,
+    ssh_key           = data.local_file.ssh_key.content
   }
 }
 
