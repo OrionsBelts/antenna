@@ -32,6 +32,10 @@ variable "do_token" {
 variable "environment" {
   description = "Deployment environment; equal to the ENVIRONMENT environment variable."
 }
+variable "faasd_version" {
+  default     = "0.9.5"
+  description = "Version of faasd to use"
+}
 variable "letsencrypt_email" {
   description = "Email used to order a certificate from Letsencrypt"
 }
