@@ -1,6 +1,5 @@
-FROM openfaas/of-watchdog:0.7.2 as watchdog
-
-FROM node:12.13.0-alpine as ship
+FROM --platform=${TARGETPLATFORM:-linux/amd64} openfaas/of-watchdog:0.8.1 as watchdog
+FROM --platform=${TARGETPLATFORM:-linux/amd64} node:14.15.4-alpine as ship
 
 COPY --from=watchdog /fwatchdog /usr/bin/fwatchdog
 RUN chmod +x /usr/bin/fwatchdog
@@ -56,4 +55,3 @@ ENV read_timeout="15s"
 HEALTHCHECK --interval=3s CMD [ -e /tmp/.lock ] || exit 1
 
 CMD ["fwatchdog"]
-
