@@ -4,6 +4,7 @@
 # DO ignore everything in it
 template/*
 # DON'T ignore this template folder (or it's content)
+!template/orions-node14-fastify
 !template/orions-node14/
 !template/orions-smoketest/
 
