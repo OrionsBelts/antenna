@@ -31,6 +31,11 @@ WORKDIR /home/app/function
 COPY function/*.json ./
 RUN npm ci --production || :
 
+# Handle common folder
+WORKDIR /home/app/function/common
+COPY function/common/*.json ./
+RUN npm ci --production || :
+
 # COPY function files and folders
 COPY function/ ./
 
