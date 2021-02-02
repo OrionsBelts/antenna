@@ -18,7 +18,7 @@ set -e
 [[ -z "${GITHUB_WORKSPACE}" ]] && echo "Missing Env Var" && exit 1
 [[ -z "${TF_VAR_do_subdomain}" ]] && echo "Missing Env Var" && exit 1
 [[ -z "${TF_VAR_do_domain}" ]] && echo "Missing Env Var" && exit 1
-[[ -z "${TF_VAR_do_token}" ]] && echo "Missing Env Var" && exit 1
+[[ -z "${TF_VAR_do_registry_auth}" ]] && echo "Missing Env Var" && exit 1
 [[ -z "${FUNCTION_PREFIX}" ]] && echo "Missing Env Var" && exit 1
 
 # Check to see that deps are installed
@@ -39,7 +39,7 @@ source "${GITHUB_WORKSPACE}/core/scripts/common.sh"
 
 # Grant permission to container registry
 echo "INFO: authenticate docker"
-docker_auth "${TF_VAR_do_token}"
+docker_auth "${TF_VAR_do_registry_auth}"
 
 # Repo root
 # INFO(mperrotte): in order for the build/deploy command to work

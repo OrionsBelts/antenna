@@ -15,10 +15,8 @@ docker_auth() {
   local token=$1
 
   mkdir -p "${HOME}/.docker/"
-  local AUTH=$(curl -s \
-    -H "Content-Type: application/json" \
-    -H "Authorization: Bearer ${token}" \
-    "${DO_API_URL}/registry/docker-credentials?read_write=true")
+
+  local AUTH='{"auths":{"registry.digitalocean.com":{"auth":"'"${token}"'"}}}'
   echo "${AUTH}" > "${HOME}/.docker/config.json"
 }
 
