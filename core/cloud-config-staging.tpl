@@ -44,7 +44,7 @@ runcmd:
 - echo ${gw_password} > /var/lib/faasd/secrets/basic-auth-password
 - echo '{"auths":{"registry.digitalocean.com":{"auth":"${do_registry_auth}"}}}' > /var/lib/faasd/.docker/config.json
 - echo admin > /var/lib/faasd/secrets/basic-auth-user
-- cd /go/src/github.com/openfaas/ && git clone https://github.com/openfaas/faasd && cd faasd && git checkout ${faasd_version}
+- cd /go/src/github.com/openfaas/ && git clone https://github.com/openfaas/faasd && cd faasd && git fetch --all --tags --prune && git checkout tags/${faasd_version} -b tag/${faasd_version}
 - curl -fSLs "https://github.com/openfaas/faasd/releases/download/${faasd_version}/faasd" --output "/usr/local/bin/faasd" && chmod a+x "/usr/local/bin/faasd"
 - cd /go/src/github.com/openfaas/faasd/ && /usr/local/bin/faasd install
 - systemctl status -l containerd --no-pager
