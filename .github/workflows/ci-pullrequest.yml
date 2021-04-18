@@ -162,7 +162,7 @@ jobs:
         run: terraform apply -auto-approve
 
       - name: Wait for System
-        timeout-minutes: 10
+        timeout-minutes: 20
         working-directory: ./core
         env:
           TF_VAR_do_subdomain: ${{ format('{0}.{1}', env.COMMITISH, secrets.STAGING_SUBDOMAIN) }}
