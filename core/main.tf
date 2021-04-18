@@ -7,6 +7,13 @@ provider "digitalocean" {
 }
 
 # - Variables
+variable "caddy_ca" {
+  default     = "https://acme-staging-v02.api.letsencrypt.org/directory"
+  description = "Caddy ca directory directive"
+}
+variable "caddy_letsencrypt_email" {
+  description = "Email used to order a certificate from Letsencrypt"
+}
 variable "caddy_version" {
   default     = "2.3.0"
   description = "Version of caddy to use"
@@ -40,9 +47,6 @@ variable "faasd_version" {
   default     = "0.9.5"
   description = "Version of faasd to use"
 }
-variable "letsencrypt_email" {
-  description = "Email used to order a certificate from Letsencrypt"
-}
 variable "ssh_key_file" {
   description = "Path to the SSH public key file"
 }
@@ -66,13 +70,15 @@ data "local_file" "ssh_key" {
 data "template_file" "cloud_init" {
   template = file(var.cloud_template)
   vars = {
-    caddy_version     = var.caddy_version,
-    do_registry_auth  = var.do_registry_auth,
-    faasd_domain_name = "${var.do_subdomain}.${var.do_domain}"
-    faasd_version     = var.faasd_version
-    gw_password       = random_password.password.result,
-    letsencrypt_email = var.letsencrypt_email,
-    ssh_key           = data.local_file.ssh_key.content
+    caddy_ca                = var.caddy_ca,
+    caddy_letsencrypt_email = var.caddy_letsencrypt_email,
+    caddy_version           = var.caddy_version,
+    do_registry_auth        = var.do_registry_auth,
+    do_token                = var.do_token,
+    faasd_domain_name       = "${var.do_subdomain}.${var.do_domain}",
+    faasd_version           = var.faasd_version,
+    gw_password             = random_password.password.result,
+    ssh_key                 = data.local_file.ssh_key.content,
   }
 }
 

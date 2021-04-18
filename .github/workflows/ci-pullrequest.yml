@@ -17,7 +17,7 @@ env:
   TF_VAR_do_ssh_key: ${{ secrets.STAGING_DO_SSH_KEY_NAME }}
   TF_VAR_do_token: ${{ secrets.DO_API_TOKEN }}
   TF_VAR_environment: staging
-  TF_VAR_letsencrypt_email: ${{ secrets.STAGING_LETSENCRYPT_EMAIL }}
+  TF_VAR_caddy_letsencrypt_email: ${{ secrets.STAGING_LETSENCRYPT_EMAIL }}
   TF_VAR_ssh_key_file: "${{ secrets.STAGING_DO_SSH_KEY_NAME }}.pub"
   TF_VAR_cloud_template: cloud-config-staging.tpl
   TF_IN_AUTOMATION: true

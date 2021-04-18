@@ -16,11 +16,14 @@ users:
 write_files:
 - content: |
     {
-      acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
-      email ${letsencrypt_email}
+      email ${caddy_letsencrypt_email}
     }
 
     ${faasd_domain_name} {
+      tls {
+        ca ${caddy_ca}
+        dns digitalocean ${do_token}
+      }
       reverse_proxy 127.0.0.1:8080
     }
 
@@ -53,6 +56,7 @@ runcmd:
 - systemctl status -l faasd --no-pager
 - curl -sSLf https://cli.openfaas.com | sh
 - sleep 5 && journalctl -u faasd --no-pager
+- wget https://golang.org/dl/go1.16.3.linux-amd64.tar.gz -O /tmp/go1.16.3.tar.gz && rm -rf /usr/local/go && tar -zxvf /tmp/go1.16.3.tar.gz -C /usr/local
 - wget https://github.com/caddyserver/xcaddy/releases/download/v0.1.9/xcaddy_0.1.9_linux_amd64.tar.gz -O /tmp/xcaddy.tar.gz && tar -zxvf /tmp/xcaddy.tar.gz -C /usr/bin xcaddy
 - xcaddy build "v${caddy_version}" --with github.com/caddy-dns/digitalocean --output /usr/bin/caddy
 - wget https://raw.githubusercontent.com/caddyserver/dist/master/init/caddy.service -O /etc/systemd/system/caddy.service
