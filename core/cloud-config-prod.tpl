@@ -56,7 +56,8 @@ runcmd:
 - systemctl status -l faasd --no-pager
 - curl -sSLf https://cli.openfaas.com | sh
 - sleep 5 && journalctl -u faasd --no-pager
-- wget https://github.com/caddyserver/xcaddy/releases/download/v0.1.9/xcaddy_0.1.9_linux_amd64.tar.gz -O /tmp/xcaddy.tar.gz && tar -zxvf /tmp/xcaddy.tar.gz -C /usr/bin xcaddy
+- wget -nv https://golang.org/dl/go1.16.3.linux-amd64.tar.gz -O /tmp/go1.16.3.tar.gz && rm -rf /usr/local/go && tar -zxf /tmp/go1.16.3.tar.gz -C /usr/local && export PATH=$PATH:/usr/local/go/bin
+- wget -nv https://github.com/caddyserver/xcaddy/releases/download/v0.1.9/xcaddy_0.1.9_linux_amd64.tar.gz -O /tmp/xcaddy.tar.gz && tar -zxf /tmp/xcaddy.tar.gz -C /usr/bin xcaddy
 - xcaddy build "v${caddy_version}" --with github.com/caddy-dns/digitalocean --output /usr/bin/caddy
 - wget https://raw.githubusercontent.com/caddyserver/dist/master/init/caddy.service -O /etc/systemd/system/caddy.service
 - systemctl daemon-reload
