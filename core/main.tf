@@ -7,6 +7,10 @@ provider "digitalocean" {
 }
 
 # - Variables
+variable "caddy_version" {
+  default     = "2.3.0"
+  description = "Version of caddy to use"
+}
 variable "do_domain" {
   description = "Your public domain"
 }
@@ -62,6 +66,7 @@ data "local_file" "ssh_key" {
 data "template_file" "cloud_init" {
   template = file(var.cloud_template)
   vars = {
+    caddy_version     = var.caddy_version,
     do_registry_auth  = var.do_registry_auth,
     faasd_domain_name = "${var.do_subdomain}.${var.do_domain}"
     faasd_version     = var.faasd_version
