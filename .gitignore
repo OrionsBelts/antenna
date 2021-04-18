@@ -4,7 +4,8 @@
 # DO ignore everything in it
 template/*
 # DON'T ignore this template folder (or it's content)
-!template/orions-node12/
+!template/orions-node14-fastify
+!template/orions-node14/
 !template/orions-smoketest/
 
 # Build folder
@@ -14,3 +15,6 @@ build/
 # Dependencies
 **/node_modules/
 node_modules/
+
+# Environment
+*.swp

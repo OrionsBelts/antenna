@@ -16,15 +16,44 @@ users:
 write_files:
 - content: |
     {
-      acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
-      email ${letsencrypt_email}
+      email ${caddy_letsencrypt_email}
     }
 
     ${faasd_domain_name} {
+      tls {
+        ca ${caddy_ca}
+        dns digitalocean ${do_token}
+      }
       reverse_proxy 127.0.0.1:8080
     }
 
   path: /etc/caddy/Caddyfile
+
+- content: |
+    [Unit]
+    Description=Caddy
+    Documentation=https://caddyserver.com/docs/
+    After=network.target network-online.target
+    Requires=network-online.target
+
+    [Service]
+    Type=notify
+    User=caddy
+    Group=caddy
+    ExecStart=/usr/bin/caddy run --environ --config /etc/caddy/Caddyfile
+    ExecReload=/usr/bin/caddy reload --config /etc/caddy/Caddyfile
+    TimeoutStopSec=5s
+    TimeoutStartSec=10m
+    LimitNOFILE=1048576
+    LimitNPROC=512
+    PrivateTmp=true
+    ProtectSystem=full
+    AmbientCapabilities=CAP_NET_BIND_SERVICE
+
+    [Install]
+    WantedBy=multi-user.target
+
+  path: /etc/systemd/system/caddy.service
 
 package_update: true
 
@@ -44,7 +73,7 @@ runcmd:
 - echo ${gw_password} > /var/lib/faasd/secrets/basic-auth-password
 - echo '{"auths":{"registry.digitalocean.com":{"auth":"${do_registry_auth}"}}}' > /var/lib/faasd/.docker/config.json
 - echo admin > /var/lib/faasd/secrets/basic-auth-user
-- cd /go/src/github.com/openfaas/ && git clone https://github.com/openfaas/faasd && cd faasd && git checkout ${faasd_version}
+- cd /go/src/github.com/openfaas/ && git clone https://github.com/openfaas/faasd && cd faasd && git fetch --all --tags --prune && git checkout tags/${faasd_version} -b tag/${faasd_version}
 - curl -fSLs "https://github.com/openfaas/faasd/releases/download/${faasd_version}/faasd" --output "/usr/local/bin/faasd" && chmod a+x "/usr/local/bin/faasd"
 - cd /go/src/github.com/openfaas/faasd/ && /usr/local/bin/faasd install
 - systemctl status -l containerd --no-pager
@@ -53,8 +82,10 @@ runcmd:
 - systemctl status -l faasd --no-pager
 - curl -sSLf https://cli.openfaas.com | sh
 - sleep 5 && journalctl -u faasd --no-pager
-- wget https://github.com/caddyserver/caddy/releases/download/v2.1.1/caddy_2.1.1_linux_amd64.tar.gz -O /tmp/caddy.tar.gz && tar -zxvf /tmp/caddy.tar.gz -C /usr/bin/ caddy
-- wget https://raw.githubusercontent.com/caddyserver/dist/master/init/caddy.service -O /etc/systemd/system/caddy.service
+- wget -nv https://golang.org/dl/go1.16.3.linux-amd64.tar.gz -O /tmp/go1.16.3.tar.gz && rm -rf /usr/local/go && tar -zxf /tmp/go1.16.3.tar.gz -C /usr/local
+- wget -nv https://github.com/caddyserver/xcaddy/releases/download/v0.1.9/xcaddy_0.1.9_linux_amd64.tar.gz -O /tmp/xcaddy.tar.gz && tar -zxf /tmp/xcaddy.tar.gz -C /usr/bin xcaddy
+- printenv && export PATH=$PATH:/usr/local/go/bin && export GOPATH=$HOME/go && export GOCACHE=$HOME/.cache/go-build
+- xcaddy build "v${caddy_version}" --with github.com/caddy-dns/digitalocean --output /usr/bin/caddy
 - systemctl daemon-reload
 - systemctl enable caddy
 - sleep 5s
