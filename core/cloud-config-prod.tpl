@@ -29,6 +29,32 @@ write_files:
 
   path: /etc/caddy/Caddyfile
 
+- content: |
+    [Unit]
+    Description=Caddy
+    Documentation=https://caddyserver.com/docs/
+    After=network.target network-online.target
+    Requires=network-online.target
+
+    [Service]
+    Type=notify
+    User=caddy
+    Group=caddy
+    ExecStart=/usr/bin/caddy run --environ --config /etc/caddy/Caddyfile
+    ExecReload=/usr/bin/caddy reload --config /etc/caddy/Caddyfile
+    TimeoutStopSec=5s
+    TimeoutStartSec=10m
+    LimitNOFILE=1048576
+    LimitNPROC=512
+    PrivateTmp=true
+    ProtectSystem=full
+    AmbientCapabilities=CAP_NET_BIND_SERVICE
+
+    [Install]
+    WantedBy=multi-user.target
+
+  path: /etc/systemd/system/caddy.service
+
 package_update: true
 
 packages:
@@ -60,7 +86,6 @@ runcmd:
 - wget -nv https://github.com/caddyserver/xcaddy/releases/download/v0.1.9/xcaddy_0.1.9_linux_amd64.tar.gz -O /tmp/xcaddy.tar.gz && tar -zxf /tmp/xcaddy.tar.gz -C /usr/bin xcaddy
 - printenv && export PATH=$PATH:/usr/local/go/bin && export GOPATH=$HOME/go && export GOCACHE=$HOME/.cache/go-build
 - xcaddy build "v${caddy_version}" --with github.com/caddy-dns/digitalocean --output /usr/bin/caddy
-- wget https://raw.githubusercontent.com/caddyserver/dist/master/init/caddy.service -O /etc/systemd/system/caddy.service
 - systemctl daemon-reload
 - systemctl enable caddy
 - sleep 5s
