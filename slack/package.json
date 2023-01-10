@@ -18,6 +18,6 @@
     "tap": "^14.10.8"
   },
   "dependencies": {
-    "@slack/oauth": "^1.2.0"
+    "@slack/oauth": "^2.6.0"
   }
 }
